@@ -5,28 +5,289 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>English Master — 10 000 mots</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Literata:wght@300;400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.383.0/umd/lucide.min.js"></script>
 <style>
-:root{--bg:#0a0d12;--s1:#111620;--s2:#1a2030;--bd:#252d3d;--tx:#e8edf5;--mt:#5a6680;--a1:#ff6b6b;--a2:#4ecdc4;--a3:#95e06c;--gd:#ffd93d;--pu:#c77dff;--or:#ff9f43;--r:12px;--rs:8px;}
+:root{
+  --bg:#0a0d12;--s1:#111620;--s2:#1a2030;--bd:#252d3d;--tx:#e8edf5;--mt:#5a6680;
+  --a1:#ff6b6b;--a2:#4ecdc4;--a3:#95e06c;--gd:#ffd93d;--pu:#c77dff;--or:#ff9f43;
+  --r:12px;--rs:8px;
+  /* Animation particles */
+  --anim-color1:#ffd93d;--anim-color2:#ff6b6b;--anim-color3:#4ecdc4;--anim-color4:#c77dff;
+}
+
+/* ══ REWARD CANVAS OVERLAY ══ */
+#anim-canvas{position:fixed;inset:0;z-index:9999;pointer-events:none;display:none;}
+
+/* ══ ICON SYSTEM ══ */
+.ico{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;}
+.ico svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ══ NAV ICON TABS ══ */
+.ntab{display:flex;align-items:center;gap:.35rem;}
+.ntab .ico{font-size:.85rem;opacity:.8;}
+
+/* ══ HEADER STAT ICONS ══ */
+.hs .ico{font-size:.82rem;color:var(--a2);}
+.hs.streak-stat .ico{color:var(--or);}
+.hs.coins-stat .ico{color:var(--gd);}
+.hs.xp-stat .ico{color:var(--a3);}
+
+/* ══ ANIMATED GRADIENT BACKGROUNDS per theme ══ */
+body.theme-dark-blue{background:radial-gradient(ellipse at 20% 50%,#0a1628 0%,#060c18 100%);}
+body.theme-purple-night{background:radial-gradient(ellipse at 70% 30%,#120820 0%,#060308 100%);}
+body.theme-forest-green{background:radial-gradient(ellipse at 30% 70%,#071409 0%,#040c06 100%);}
+body.theme-sunset-orange{background:radial-gradient(ellipse at 50% 80%,#1a0c04 0%,#0d0602 100%);}
+body.theme-rose-gold{background:radial-gradient(ellipse at 60% 20%,#1a0c12 0%,#0d0608 100%);}
+body.theme-ocean-teal{background:radial-gradient(ellipse at 10% 60%,#041418 0%,#020a0e 100%);}
+
+/* Premium themes */
+body.theme-neon-cyberpunk{background:radial-gradient(ellipse at 50% 50%,#0f0025 0%,#030010 100%);}
+body.theme-luxury-gold{background:radial-gradient(ellipse at 30% 20%,#1a1200 0%,#0d0900 100%);}
+body.theme-cherry-blossom{background:radial-gradient(ellipse at 80% 60%,#1a0818 0%,#0d040e 100%);}
+body.theme-deep-space{background:radial-gradient(ellipse at 50% 50%,#020514 0%,#000208 100%);}
+body.theme-lava{background:radial-gradient(ellipse at 50% 100%,#1a0400 0%,#0d0200 100%);}
+body.theme-arctic-ice{background:radial-gradient(ellipse at 50% 0%,#021020 0%,#010810 100%);}
+body.theme-toxic-jungle{background:radial-gradient(ellipse at 20% 80%,#041a04 0%,#020d02 100%);}
+body.theme-midnight-rose{background:radial-gradient(ellipse at 70% 50%,#14020e 0%,#0a0108 100%);}
+body.theme-solar-flare{background:radial-gradient(ellipse at 50% 20%,#1a0c00 0%,#0d0700 100%);}
+body.theme-cosmic-violet{background:radial-gradient(ellipse at 50% 50%,#0e041a 0%,#08020f 100%);}
+
+/* ══ SHOP PREMIUM BADGE ══ */
+.shop-premium-badge{
+  position:absolute;top:-1px;right:-1px;
+  font-size:.52rem;font-family:'Syne',sans-serif;font-weight:800;letter-spacing:.06em;
+  padding:.12rem .45rem;border-radius:0 var(--r) 0 6px;
+  background:linear-gradient(135deg,var(--gd),#ff9f43);color:#0a0d12;
+  text-transform:uppercase;
+}
+
+/* ══ THEME PREVIEW CARDS ══ */
+.theme-preview{width:100%;height:36px;border-radius:6px;margin-bottom:.4rem;position:relative;overflow:hidden;}
+.theme-preview::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.08));}
+
+/* ══ ANIMATION ITEM SPECIAL STYLES ══ */
+.shop-item.anim-item{border-color:rgba(199,125,255,.2);}
+.shop-item.anim-item:hover{border-color:var(--pu);box-shadow:0 0 20px rgba(199,125,255,.15);}
+.shop-item.anim-perfect{border-color:rgba(255,217,61,.25);}
+.shop-item.anim-perfect:hover{border-color:var(--gd);box-shadow:0 0 20px rgba(255,217,61,.15);}
+
+/* ══ COLOR BLOCK PREVIEWS ══ */
+.color-block-preview{
+  width:100%;height:48px;border-radius:8px;margin-bottom:.5rem;
+  position:relative;overflow:hidden;
+}
+
+/* ══ SHOP SECTION TABS ══ */
+.shop-tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1.2rem;padding:.3rem;background:var(--s1);border-radius:var(--r);border:1px solid var(--bd);}
+.shop-tab{flex:1;min-width:80px;padding:.42rem .65rem;border:none;border-radius:var(--rs);cursor:pointer;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:800;background:transparent;color:var(--mt);transition:all .18s;display:flex;align-items:center;justify-content:center;gap:.3rem;white-space:nowrap;}
+.shop-tab:hover{color:var(--tx);}
+.shop-tab.active{background:var(--s2);color:var(--tx);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+/* ══ STREAK FREEZE INDICATOR ══ */
+.streak-frozen{background:linear-gradient(135deg,rgba(100,150,255,.08),rgba(78,205,196,.08));border:1px solid rgba(100,150,255,.2);border-radius:var(--rs);padding:.5rem .8rem;font-size:.74rem;display:flex;align-items:center;gap:.45rem;margin-bottom:.6rem;}
+.streak-frozen .ico{color:#6496ff;}
+
+/* ══ ENHANCED WCARD with real icons ══ */
+.spk-btn{display:inline-flex;align-items:center;gap:.2rem;background:var(--s2);border:1px solid var(--bd);border-radius:4px;padding:.18rem .38rem;cursor:pointer;font-size:.66rem;color:var(--mt);transition:all .12s;}
+.spk-btn:hover{border-color:var(--a2);color:var(--a2);}
+.spk-btn svg{width:.75rem;height:.75rem;}
+
+/* ══ DAILY MIDNIGHT RESET INDICATOR ══ */
+.midnight-reset{font-size:.65rem;color:var(--mt);display:flex;align-items:center;gap:.3rem;margin-top:.4rem;opacity:.7;}
+.midnight-reset svg{width:.7rem;height:.7rem;}
 *{box-sizing:border-box;margin:0;padding:0;}html{scroll-behavior:smooth;}
 body{font-family:'Literata',Georgia,serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;}
-.hdr{padding:1rem 1.5rem .8rem;border-bottom:1px solid var(--bd);background:linear-gradient(180deg,#111620,#0a0d12);position:sticky;top:0;z-index:300;}
-.hdr-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
-.logo{font-family:'Syne',sans-serif;font-size:clamp(1rem,3vw,1.5rem);font-weight:800;letter-spacing:-.03em;white-space:nowrap;}
+/* ══ HEADER — MINIMALISTE ══ */
+.hdr{
+  padding:.75rem 1.2rem;
+  border-bottom:1px solid var(--bd);
+  background:#0a0d12;
+  position:sticky;top:0;z-index:300;
+}
+.hdr-top{display:flex;align-items:center;gap:.8rem;}
+.logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap;flex:1;}
 .logo span{color:var(--a2);}
-.hstats{display:flex;gap:.7rem;flex-wrap:wrap;margin-left:auto;}
-.hs{font-size:.68rem;color:var(--mt);font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:.3rem;}
+
+/* Stats compacts en ligne */
+.hstats{display:flex;gap:.55rem;align-items:center;}
+.hs{font-size:.7rem;color:var(--mt);font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:.22rem;}
 .hs b{color:var(--tx);}
-.gp-row{display:flex;align-items:center;gap:.6rem;margin-top:.55rem;}
-.gp-bar{flex:1;height:4px;background:var(--s2);border-radius:2px;overflow:hidden;}
-.gp-fill{height:100%;background:linear-gradient(90deg,var(--a2),var(--a3));border-radius:2px;transition:width .6s;}
-.gp-lbl{font-size:.65rem;color:var(--mt);white-space:nowrap;font-family:'Syne',sans-serif;}
+
+/* ══ BARRE XP MEGA VISIBLE ══ */
+.xp-zone{
+  margin-top:.65rem;
+  background:var(--s1);
+  border:1px solid var(--bd);
+  border-radius:10px;
+  padding:.55rem .75rem;
+  position:relative;
+  overflow:hidden;
+}
+.xp-zone::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(78,205,196,.04),rgba(149,224,108,.04));
+  pointer-events:none;
+}
+.xp-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem;}
+.xp-level-badge{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;
+  background:linear-gradient(135deg,var(--a2),var(--a3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:flex;align-items:center;gap:.3rem;
+}
+.xp-level-badge .lv-num{
+  font-size:1.1rem;
+  background:linear-gradient(135deg,var(--a2),var(--a3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.xp-text{font-size:.68rem;color:var(--mt);font-family:'Syne',sans-serif;}
+.xp-text b{color:var(--a3);}
+.gp-bar{
+  width:100%;height:12px;
+  background:var(--s2);
+  border-radius:6px;overflow:hidden;
+  border:1px solid rgba(78,205,196,.12);
+  position:relative;
+}
+.gp-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--a2),var(--a3));
+  border-radius:6px;
+  transition:width .8s cubic-bezier(.4,0,.2,1);
+  position:relative;
+}
+.gp-fill::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+  animation:xp-shine 2.5s infinite;
+}
+@keyframes xp-shine{
+  0%{transform:translateX(-100%);}
+  100%{transform:translateX(200%);}
+}
+.xp-pct{
+  position:absolute;right:.55rem;top:50%;transform:translateY(-50%);
+  font-family:'Syne',sans-serif;font-size:.62rem;font-weight:800;
+  color:rgba(255,255,255,.75);text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+/* Legacy compat */
+.gp-row{display:none;}
 .gp-lbl b{color:var(--a3);}
-.nav-wrap{background:var(--bg);border-bottom:1px solid var(--bd);position:sticky;top:65px;z-index:299;overflow-x:auto;scrollbar-width:none;}
-.nav-wrap::-webkit-scrollbar{display:none;}
-.nav{display:flex;padding:0 .5rem;min-width:max-content;}
-.ntab{padding:.55rem 1rem;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Syne',sans-serif;font-size:.73rem;font-weight:700;background:transparent;color:var(--mt);transition:all .15s;white-space:nowrap;}
-.ntab:hover{color:var(--tx);}
-.ntab.active{color:var(--tx);border-bottom-color:var(--a2);}
+
+/* ══ HAMBURGER BUTTON ══ */
+.burger{
+  background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;gap:5px;
+  padding:.4rem;border-radius:var(--rs);
+  transition:background .15s;
+}
+.burger:hover{background:var(--s2);}
+.burger span{
+  display:block;width:22px;height:2px;
+  background:var(--tx);border-radius:2px;
+  transition:all .25s;
+}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.burger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* ══ SIDEBAR MENU ══ */
+.menu-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,0);pointer-events:none;
+  transition:background .25s;
+}
+.menu-overlay.open{background:rgba(0,0,0,.6);pointer-events:all;}
+
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:260px;
+  background:#0e1219;
+  border-right:1px solid var(--bd);
+  z-index:401;
+  transform:translateX(-100%);
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.sidebar.open{transform:translateX(0);}
+
+.sidebar-head{
+  padding:1.2rem 1rem;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sidebar-logo{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;}
+.sidebar-logo span{color:var(--a2);}
+
+.sidebar-close{
+  background:none;border:1px solid var(--bd);border-radius:var(--rs);
+  cursor:pointer;color:var(--mt);padding:.28rem .45rem;font-size:.8rem;
+  transition:all .12s;
+}
+.sidebar-close:hover{color:var(--tx);border-color:var(--tx);}
+
+.sidebar-user{
+  padding:.75rem 1rem;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:.65rem;
+}
+.sidebar-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--a2),var(--a3));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;
+  color:#0a0d12;flex-shrink:0;
+}
+.sidebar-username{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:800;}
+.sidebar-email{font-size:.65rem;color:var(--mt);}
+
+.sidebar-nav{flex:1;padding:.5rem 0;}
+.snav-item{
+  width:100%;padding:.72rem 1rem;
+  background:none;border:none;
+  display:flex;align-items:center;gap:.75rem;
+  cursor:pointer;font-family:'Syne',sans-serif;
+  font-size:.8rem;font-weight:700;color:var(--mt);
+  transition:all .12s;text-align:left;
+  border-left:3px solid transparent;
+}
+.snav-item:hover{color:var(--tx);background:var(--s1);}
+.snav-item.active{color:var(--a2);background:rgba(78,205,196,.06);border-left-color:var(--a2);}
+.snav-item .sico{font-size:.85rem;width:1.2rem;display:flex;align-items:center;justify-content:center;}
+
+.sidebar-footer{
+  padding:.75rem 1rem;
+  border-top:1px solid var(--bd);
+}
+.sync-status{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.68rem;color:var(--mt);margin-bottom:.6rem;
+}
+.sync-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--a3);flex-shrink:0;
+}
+.sync-dot.syncing{animation:pulse-dot 1s infinite;}
+.sync-dot.error{background:var(--a1);}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.sidebar-signout{
+  width:100%;padding:.42rem;
+  background:transparent;border:1px solid var(--bd);
+  border-radius:var(--rs);cursor:pointer;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;
+  color:var(--mt);transition:all .12s;
+}
+.sidebar-signout:hover{border-color:var(--a1);color:var(--a1);}
+
+/* ══ CURRENT PAGE TITLE ══ */
+.page-title{
+  display:none; /* hidden, navigation via sidebar */
+}
+
+/* Legacy nav hidden */
+.nav-wrap{display:none;}
 .view{display:none;}.view.active{display:block;animation:fi .2s ease;}
 @keyframes fi{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
 .pw{max-width:920px;margin:0 auto;padding:1.1rem 1rem 5rem;}
@@ -98,7 +359,7 @@ body{font-family:'Literata',Georgia,serif;background:var(--bg);color:var(--tx);m
 .lfb.active{background:var(--tx);color:var(--bg);border-color:var(--tx);}
 .l10k-info{font-size:.7rem;color:var(--mt);margin-bottom:.55rem;}
 .l10k-tbl{width:100%;border-collapse:collapse;}
-.l10k-tbl thead th{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mt);padding:.45rem .65rem;border-bottom:1px solid var(--bd);text-align:left;background:var(--s1);position:sticky;top:103px;}
+.l10k-tbl thead th{font-family:'Syne',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mt);padding:.45rem .65rem;border-bottom:1px solid var(--bd);text-align:left;background:var(--s1);position:sticky;top:95px;}
 .l10k-tbl tbody tr{border-bottom:1px solid rgba(37,45,61,.5);transition:background .1s;}
 .l10k-tbl tbody tr:hover{background:var(--s1);}
 .l10k-tbl td{padding:.38rem .65rem;font-size:.76rem;vertical-align:middle;}
@@ -352,36 +613,127 @@ body{font-family:'Literata',Georgia,serif;background:var(--bg);color:var(--tx);m
 </head>
 <body>
 
-<div class="hdr">
-  <div class="hdr-top">
-    <div class="logo">🇺🇸 <span>English</span> Master</div>
-    <div class="hstats">
-      <div class="hs">📚 <b id="h-learned">0</b> appris</div>
-      <div class="hs">🔥 <b id="h-streak">0</b> jours</div>
-      <div class="hs">🪙 <b id="h-coins">0</b></div>
-      <div class="hs">⚡ <b id="h-xp">0</b> XP</div>
-      <div class="hs" id="h-multiplier-wrap" style="display:none">✨ x<b id="h-multiplier">1</b></div>
+<!-- AUTH MODAL -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.9);align-items:center;justify-content:center;flex-direction:column;">
+  <div style="background:#0e1219;border:1px solid var(--bd);border-radius:16px;padding:2rem 1.8rem;max-width:360px;width:92%;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+    <div style="text-align:center;margin-bottom:1.6rem;">
+      <div style="font-size:1.8rem;margin-bottom:.4rem;">🇺🇸</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;margin-bottom:.3rem;"><span style="color:var(--a2)">English</span> Master</div>
+      <div style="font-size:.78rem;color:var(--mt);">Crée un compte pour sauvegarder ta progression sur tous tes appareils.</div>
     </div>
-  </div>
-  <div class="gp-row">
-    <div class="gp-bar"><div class="gp-fill" id="gp-fill"></div></div>
-    <div class="gp-lbl">Niv.<b id="gp-lvl">1</b> — <b id="gp-n">0</b>/<span id="gp-tot">1000</span> XP</div>
+
+    <!-- TABS -->
+    <div style="display:flex;background:var(--s1);border-radius:8px;padding:3px;margin-bottom:1.4rem;gap:3px;">
+      <button id="auth-tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:.45rem;border:none;border-radius:6px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;background:var(--s2);color:var(--tx);transition:all .15s;">Connexion</button>
+      <button id="auth-tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:.45rem;border:none;border-radius:6px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;background:transparent;color:var(--mt);transition:all .15s;">Inscription</button>
+    </div>
+
+    <!-- FORM -->
+    <div id="auth-signup-name" style="display:none;margin-bottom:.75rem;">
+      <label style="font-size:.68rem;color:var(--mt);font-family:'Syne',sans-serif;font-weight:700;display:block;margin-bottom:.3rem;">PSEUDO</label>
+      <input id="auth-name" type="text" placeholder="Ton pseudo" style="width:100%;background:var(--s1);border:1.5px solid var(--bd);border-radius:8px;padding:.6rem .85rem;color:var(--tx);font-family:'Literata',serif;font-size:.85rem;outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--a2)'" onblur="this.style.borderColor='var(--bd)'">
+    </div>
+    <div style="margin-bottom:.75rem;">
+      <label style="font-size:.68rem;color:var(--mt);font-family:'Syne',sans-serif;font-weight:700;display:block;margin-bottom:.3rem;">EMAIL</label>
+      <input id="auth-email" type="email" placeholder="ton@email.com" style="width:100%;background:var(--s1);border:1.5px solid var(--bd);border-radius:8px;padding:.6rem .85rem;color:var(--tx);font-family:'Literata',serif;font-size:.85rem;outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--a2)'" onblur="this.style.borderColor='var(--bd)'" onkeydown="if(event.key==='Enter')submitAuth()">
+    </div>
+    <div style="margin-bottom:1.2rem;">
+      <label style="font-size:.68rem;color:var(--mt);font-family:'Syne',sans-serif;font-weight:700;display:block;margin-bottom:.3rem;">MOT DE PASSE</label>
+      <input id="auth-pass" type="password" placeholder="••••••••" style="width:100%;background:var(--s1);border:1.5px solid var(--bd);border-radius:8px;padding:.6rem .85rem;color:var(--tx);font-family:'Literata',serif;font-size:.85rem;outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--a2)'" onblur="this.style.borderColor='var(--bd)'" onkeydown="if(event.key==='Enter')submitAuth()">
+    </div>
+    <div id="auth-error" style="display:none;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:6px;padding:.5rem .75rem;font-size:.74rem;color:var(--a1);margin-bottom:.9rem;"></div>
+    <button onclick="submitAuth()" style="width:100%;padding:.7rem;background:linear-gradient(135deg,var(--a2),var(--a3));border:none;border-radius:8px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:800;font-size:.88rem;color:#0a0d12;transition:filter .12s;margin-bottom:.8rem;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter=''">
+      <span id="auth-btn-text">Se connecter</span>
+    </button>
+    <div style="text-align:center;">
+      <button onclick="skipAuth()" style="background:none;border:none;cursor:pointer;font-size:.72rem;color:var(--mt);text-decoration:underline;font-family:'Literata',serif;">Continuer sans compte (progression locale uniquement)</button>
+    </div>
   </div>
 </div>
 
-<div class="nav-wrap">
-  <div class="nav">
-    <button class="ntab active" onclick="showView('path',this)">📍 Parcours</button>
-    <button class="ntab" onclick="showView('daily',this)" id="nav-daily">🎯 Quiz du Jour</button>
-    <button class="ntab" onclick="showView('list10k',this)">📋 Liste 10 000</button>
-    <button class="ntab" onclick="showView('fc',this)">🃏 Flashcards</button>
-    <button class="ntab" onclick="showView('quiz',this)">⚡ Quiz</button>
-    <button class="ntab" onclick="showView('irr',this)">🔀 Irréguliers</button>
-    <button class="ntab" onclick="showView('grammar',this)">🎓 Cours</button>
-    <button class="ntab" onclick="showView('gt',this)">🏆 Grand Test</button>
-    <button class="ntab" onclick="showView('shop',this)">🛒 Boutique</button>
-    <button class="ntab" onclick="showView('guide',this)">🤖 Guide IA</button>
+<!-- MENU OVERLAY -->
+<div class="menu-overlay" id="menu-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">🇺🇸 <span>English</span> Master</div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
   </div>
+  <div class="sidebar-user" id="sidebar-user">
+    <div class="sidebar-avatar" id="sb-avatar">?</div>
+    <div>
+      <div class="sidebar-username" id="sb-name">Invité</div>
+      <div class="sidebar-email" id="sb-email">Non connecté</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav">
+    <button class="snav-item active" data-view="path" onclick="snavGo('path',this)"><span class="sico">🗺️</span>Parcours</button>
+    <button class="snav-item" data-view="daily" id="snav-daily" onclick="snavGo('daily',this)"><span class="sico">📅</span>Quiz du Jour</button>
+    <button class="snav-item" data-view="list10k" onclick="snavGo('list10k',this)"><span class="sico">📋</span>Liste 10 000</button>
+    <button class="snav-item" data-view="fc" onclick="snavGo('fc',this)"><span class="sico">🃏</span>Flashcards</button>
+    <button class="snav-item" data-view="quiz" onclick="snavGo('quiz',this)"><span class="sico">⚡</span>Quiz rapide</button>
+    <button class="snav-item" data-view="irr" onclick="snavGo('irr',this)"><span class="sico">🔀</span>Irréguliers</button>
+    <button class="snav-item" data-view="grammar" onclick="snavGo('grammar',this)"><span class="sico">📚</span>Cours</button>
+    <button class="snav-item" data-view="gt" onclick="snavGo('gt',this)"><span class="sico">🏆</span>Grand Test</button>
+    <button class="snav-item" data-view="shop" onclick="snavGo('shop',this)"><span class="sico">🛍️</span>Boutique</button>
+    <button class="snav-item" data-view="guide" onclick="snavGo('guide',this)"><span class="sico">🤖</span>Guide IA</button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sync-status" id="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">Synchronisé</span>
+    </div>
+    <button class="sidebar-signout" id="sb-signout-btn" onclick="signOut()" style="display:none;">Déconnexion</button>
+    <button class="sidebar-signout" id="sb-signin-btn" onclick="openAuthModal()" style="display:none;border-color:rgba(78,205,196,.3);color:var(--a2);">Se connecter / S'inscrire</button>
+  </div>
+</div>
+
+<canvas id="anim-canvas"></canvas>
+
+<!-- HEADER MINIMALISTE -->
+<div class="hdr">
+  <div class="hdr-top">
+    <button class="burger" id="burger-btn" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo"><span>English</span> Master</div>
+    <div class="hstats">
+      <div class="hs streak-stat" title="Streak">
+        🔥 <b id="h-streak">0</b>
+      </div>
+      <div class="hs coins-stat" title="Coins">
+        🪙 <b id="h-coins">0</b>
+      </div>
+      <div class="hs" title="Mots appris">
+        📖 <b id="h-learned">0</b>
+      </div>
+      <div class="hs" id="h-multiplier-wrap" style="display:none" title="Multiplicateur actif">
+        ⭐ x<b id="h-multiplier">1</b>
+      </div>
+    </div>
+  </div>
+  <!-- BARRE XP VISIBLE -->
+  <div class="xp-zone">
+    <div class="xp-top-row">
+      <div class="xp-level-badge">
+        ⚡ Niv.<span class="lv-num" id="gp-lvl">1</span>
+      </div>
+      <div class="xp-text"><b id="h-xp">0</b> XP total · <b id="gp-n">0</b>/<span id="gp-tot">1000</span></div>
+    </div>
+    <div class="gp-bar">
+      <div class="gp-fill" id="gp-fill"></div>
+      <div class="xp-pct" id="xp-pct">0%</div>
+    </div>
+  </div>
+  <div class="gp-row" style="display:none">
+    <div class="gp-bar"><div class="gp-fill" id="gp-fill-legacy"></div></div>
+    <div class="gp-lbl">Niv.<b id="gp-lvl-legacy">1</b> — <b>0</b>/<span>1000</span> XP</div>
+  </div>
+</div>
+
+<div class="nav-wrap" style="display:none">
+  <div class="nav"></div>
 </div>
 
 <!-- PARCOURS -->
@@ -1695,6 +2047,7 @@ const ST={
   quizDiscount: localStorage.getItem('em_qdisc')==='1',
   // Daily quiz state
   dailyQuizWords: JSON.parse(localStorage.getItem('em_dqw')||'[]'),
+  streakFreezeExpiry: parseInt(localStorage.getItem('em_sf')||'0'),
 };
 
 // XP needed per level
@@ -1707,6 +2060,11 @@ function currentLevel(){
 }
 
 function save(){
+  // This version is replaced by the patched save() defined in AUTH system section below.
+  // Kept as placeholder - the real save() is at the bottom of this script.
+  _saveInternal();
+}
+function _saveInternal(){
   localStorage.setItem('em_ld',JSON.stringify([...ST.learned]));
   localStorage.setItem('em_ul',ST.unlocked);
   localStorage.setItem('em_sc',JSON.stringify(ST.scores));
@@ -1727,6 +2085,7 @@ function save(){
   localStorage.setItem('em_ai',ST.aiUnlocked?'1':'0');
   localStorage.setItem('em_qdisc',ST.quizDiscount?'1':'0');
   localStorage.setItem('em_dqw',JSON.stringify(ST.dailyQuizWords));
+  localStorage.setItem('em_sf',ST.streakFreezeExpiry||0);
   updateHdr();
 }
 
@@ -1742,16 +2101,22 @@ function updateHdr(){
   const mw=document.getElementById('h-multiplier-wrap');
   if(mult>1){mw.style.display='flex';document.getElementById('h-multiplier').textContent=mult;}
   else mw.style.display='none';
-  // XP bar
+  // XP bar (new visible bar)
   const lvInfo=currentLevel();
   document.getElementById('gp-lvl').textContent=lvInfo.level;
-  document.getElementById('gp-n').textContent=lvInfo.xpInLevel;
-  document.getElementById('gp-tot').textContent=lvInfo.xpNeeded;
-  document.getElementById('gp-fill').style.width=(lvInfo.xpInLevel/lvInfo.xpNeeded*100)+'%';
+  document.getElementById('gp-n').textContent=lvInfo.xpInLevel.toLocaleString();
+  document.getElementById('gp-tot').textContent=lvInfo.xpNeeded.toLocaleString();
+  const pct=Math.round(lvInfo.xpInLevel/lvInfo.xpNeeded*100);
+  document.getElementById('gp-fill').style.width=pct+'%';
+  const pctEl=document.getElementById('xp-pct');
+  if(pctEl) pctEl.textContent=pct+'%';
   // Daily quiz nav badge
-  const today=getToday();
-  const dn=document.getElementById('nav-daily');
-  if(dn) dn.textContent = ST.dailyDone===today ? '🎯 Quiz du Jour ✓' : '🎯 Quiz du Jour 🔴';
+  const today2=getToday();
+  const dn=document.getElementById('snav-daily');
+  if(dn){
+    const done=ST.dailyDone===today2;
+    dn.innerHTML=`<span class="sico">📅</span>Quiz du Jour ${done?'<span style="color:var(--a3);font-size:.7rem;margin-left:auto">✓</span>':'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ff4444;vertical-align:middle;margin-left:auto"></span>'}`;
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1898,12 +2263,31 @@ function checkDailyLogin(){
   const yesterday=new Date();
   yesterday.setDate(yesterday.getDate()-1);
   const yStr=yesterday.toISOString().slice(0,10);
-  if(ST.lastLogin===yStr) ST.streak++;
-  else if(ST.lastLogin!=='') ST.streak=1;
-  else ST.streak=1;
+
+  if(ST.lastLogin===today) return;
+  if(ST.lastLogin===yStr){
+    // Consecutive day
+    ST.streak++;
+  } else if(ST.lastLogin===''){
+    ST.streak=1;
+  } else {
+    // Missed at least one day — check streak freeze
+    if(ST.streakFreezeExpiry&&Date.now()<ST.streakFreezeExpiry){
+      // Freeze protects streak for one missed day
+      ST.streakFreezeExpiry=0;
+      toast('🧊 Gel de streak utilisé ! Ton streak est protégé.');
+      // streak stays intact
+    } else {
+      ST.streak=1; // reset
+    }
+  }
   ST.lastLogin=today;
-  // Generate daily quiz words if new day
+  // Generate daily quiz words for new day (resets at midnight)
   generateDailyQuizWords();
+  // Reset daily done if new day
+  if(ST.dailyDone!==today){
+    // Already handled by dailyDone check in renderDailyView
+  }
   save();
   if(ST.streak>0&&ST.streak%7===0) setTimeout(()=>showRewardModal('🔥',`${ST.streak} jours de suite !`,'Incroyable régularité ! Récompense spéciale :'),800);
 }
@@ -1950,10 +2334,17 @@ function renderDailyView(){
 
   // Daily quiz
   if(ST.dailyDone===today){
-    el.innerHTML=streakHtml+boostsHtml+`<div class="daily-done-banner">
+    // Calculate time until midnight
+    const now=new Date();
+    const midnight=new Date();midnight.setHours(24,0,0,0);
+    const diff=midnight-now;
+    const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);
+    const freezeHtml=ST.streakFreezeExpiry>Date.now()?`<div class="streak-frozen"><span class="ico"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" width="16" height="16"><path d="M12 2v20M4.93 4.93l14.14 14.14M2 12h20M4.93 19.07l14.14-14.14"/></svg></span><b>Gel de streak actif</b> — ton streak est protégé jusqu'à ${new Date(ST.streakFreezeExpiry).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>`:'';
+    el.innerHTML=streakHtml+boostsHtml+freezeHtml+`<div class="daily-done-banner">
 <div style="font-size:2.2rem">✅</div>
 <h2 style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;margin:.4rem 0">Quiz du jour terminé !</h2>
-<p style="font-size:.8rem;color:var(--mt)">Reviens demain pour un nouveau quiz personnalisé. Continue tes flashcards et révisions pour accumuler XP et coins !</p>
+<p style="font-size:.8rem;color:var(--mt)">Reviens demain pour un nouveau quiz personnalisé.</p>
+<div class="midnight-reset"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Prochain quiz dans <b style="color:var(--a2)">${h}h${String(m).padStart(2,'0')}</b> (minuit heure locale)</div>
 </div>`;
   } else {
     el.innerHTML=streakHtml+boostsHtml+`<div class="daily-card">
@@ -2020,7 +2411,10 @@ function endDQ(){
   let rewardHtml='';
   if(dqPerfect){
     onPerfectLesson();
+    triggerVictoryAnim(true);
     rewardHtml=`<div style="background:rgba(149,224,108,.07);border:1px solid rgba(149,224,108,.2);border-radius:var(--rs);padding:.8rem;margin:.7rem 0;font-size:.8rem;color:var(--a3)">🎉 Quiz parfait ! Tu as gagné des coins et de l'XP !</div>`;
+  } else {
+    triggerVictoryAnim(false);
   }
   save();
   document.getElementById('dq-area').innerHTML=`<div style="text-align:center;padding:1rem 0">
@@ -2037,66 +2431,256 @@ ${rewardHtml}
 // SHOP
 // ══════════════════════════════════════════════
 const SHOP_ITEMS=[
-  {id:'deco_leaf',name:'Décoration Feuille',desc:'Thème végétal classique pour personnaliser ton interface.',icon:'🌿',price:500,type:'deco',slot:'theme'},
-  {id:'deco_moon',name:'Décoration Lune',desc:'Thème lunaire apaisante pour les révisions nocturnes.',icon:'🌙',price:500,type:'deco',slot:'theme'},
-  {id:'deco_star',name:'Décoration Étoile',desc:'Thème stellaire pour briller dans tes apprentissages.',icon:'⭐',price:500,type:'deco',slot:'theme'},
-  {id:'deco_wave',name:'Décoration Vague',desc:'Thème océanique pour apprendre avec fluidité.',icon:'🌊',price:500,type:'deco',slot:'theme'},
-  {id:'deco_diamond',name:'Décoration Diamant',desc:'Thème cristallin pour un style premium.',icon:'💎',price:500,type:'deco',slot:'theme'},
+  // ── THÈMES CLASSIQUES (500 coins) ──
+  {id:'theme_dark_blue',name:'Dark Blue',desc:'Océan profond, tons bleus nuit. Sobre et concentré.',icon:'🌊',price:500,type:'theme',slot:'theme',
+   preview:{bg:'#0a1628',a1:'#4a9eff',a2:'#6bb8ff',a3:'#90d0ff'},cssClass:''},
+  {id:'theme_purple_night',name:'Purple Night',desc:'Violet nocturne mystérieux. Idéal pour réviser le soir.',icon:'🌙',price:500,type:'theme',slot:'theme',
+   preview:{bg:'#120820',a1:'#c77dff',a2:'#a855f7',a3:'#e879f9'},cssClass:''},
+  {id:'theme_forest_green',name:'Forest Green',desc:'Vert forêt apaisant. Focus maximal garanti.',icon:'🌿',price:500,type:'theme',slot:'theme',
+   preview:{bg:'#071409',a1:'#7ec67a',a2:'#4caf50',a3:'#95e06c'},cssClass:''},
+  {id:'theme_sunset_orange',name:'Sunset Orange',desc:'Coucher de soleil chaleureux. Énergie et motivation.',icon:'🌅',price:500,type:'theme',slot:'theme',
+   preview:{bg:'#1a0c04',a1:'#ff9f43',a2:'#ff7043',a3:'#ffd93d'},cssClass:''},
+  {id:'theme_rose_gold',name:'Rose Gold',desc:'Rose doré élégant. Style premium et raffiné.',icon:'🌸',price:500,type:'theme',slot:'theme',
+   preview:{bg:'#1a0c12',a1:'#f48fb1',a2:'#f06292',a3:'#f8bbd9'},cssClass:''},
+  {id:'theme_ocean_teal',name:'Ocean Teal',desc:'Turquoise maritime cristallin. Sérénité absolue.',icon:'🐚',price:500,type:'theme',slot:'theme',
+   preview:{bg:'#041418',a1:'#26c6da',a2:'#00acc1',a3:'#80deea'},cssClass:''},
+  // ── COLOR BLOCKS PREMIUM (1500 coins) ──
+  {id:'theme_neon_cyberpunk',name:'Neon Cyberpunk',desc:'Violet néon et cyan électrique. Pour les esprits hackeurs.',icon:'⚡',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#0f0025',a1:'#ff00ff',a2:'#00ffff',a3:'#ff0080'},cssClass:'epic-box'},
+  {id:'theme_luxury_gold',name:'Luxury Gold',desc:'Or luxueux sur fond sombre. Édition collector ultime.',icon:'👑',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#1a1200',a1:'#ffd700',a2:'#ffb300',a3:'#fff176'},cssClass:'epic-box'},
+  {id:'theme_cherry_blossom',name:'Cherry Blossom',desc:'Rose cerisier japonais délicat. Beauté éphémère.',icon:'🌺',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#1a0818',a1:'#ff80ab',a2:'#f48fb1',a3:'#ffc1e3'},cssClass:'epic-box'},
+  {id:'theme_deep_space',name:'Deep Space',desc:'Bleu abyssal cosmique. Là où les étoiles naissent.',icon:'🌌',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#020514',a1:'#3d5afe',a2:'#448aff',a3:'#82b1ff'},cssClass:'epic-box'},
+  {id:'theme_lava',name:'Lava',desc:'Rouge volcanique intense. Pour les esprits en fusion.',icon:'🌋',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#1a0400',a1:'#ff1744',a2:'#ff5722',a3:'#ff8a65'},cssClass:'epic-box'},
+  {id:'theme_arctic_ice',name:'Arctic Ice',desc:'Blanc glacial arctique cristallin. Clarté absolue.',icon:'🧊',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#021020',a1:'#80d8ff',a2:'#40c4ff',a3:'#b3e5fc'},cssClass:'epic-box'},
+  {id:'theme_toxic_jungle',name:'Toxic Jungle',desc:'Vert acide toxique. Danger et vitalité mêlés.',icon:'☢️',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#041a04',a1:'#76ff03',a2:'#64dd17',a3:'#ccff90'},cssClass:'epic-box'},
+  {id:'theme_midnight_rose',name:'Midnight Rose',desc:'Rose sombre minuit envoûtant. Mystère et passion.',icon:'🥀',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#14020e',a1:'#e91e63',a2:'#ad1457',a3:'#f48fb1'},cssClass:'epic-box'},
+  {id:'theme_solar_flare',name:'Solar Flare',desc:'Explosion solaire ardente. Puissance irradiante.',icon:'☀️',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#1a0c00',a1:'#ff6d00',a2:'#ffab00',a3:'#ffe57f'},cssClass:'epic-box'},
+  {id:'theme_cosmic_violet',name:'Cosmic Violet',desc:'Violet cosmique profond. L\'univers à portée de main.',icon:'🔮',price:1500,type:'theme',slot:'theme',premium:true,
+   preview:{bg:'#0e041a',a1:'#9c27b0',a2:'#6a1b9a',a3:'#ce93d8'},cssClass:'epic-box'},
+  // ── ANIMATIONS VICTOIRE CLASSIQUE (800 coins) ──
+  {id:'anim_confettis',name:'Confettis',desc:'Une pluie de confettis colorés explose à l\'écran.',icon:'🎊',price:800,type:'anim',animType:'victory',
+   cssClass:'anim-item'},
+  {id:'anim_etoiles',name:'Étoiles filantes',desc:'Des étoiles traversent l\'écran en diagonale.',icon:'🌠',price:800,type:'anim',animType:'victory',
+   cssClass:'anim-item'},
+  {id:'anim_feu_dartifice',name:'Feu d\'artifice',desc:'Explosions de feux d\'artifice multicolores.',icon:'🎆',price:800,type:'anim',animType:'victory',
+   cssClass:'anim-item'},
+  {id:'anim_bulles',name:'Bulles',desc:'Des bulles lumineuses montent en flottant.',icon:'🫧',price:800,type:'anim',animType:'victory',
+   cssClass:'anim-item'},
+  {id:'anim_pixel_explosion',name:'Pixel Explosion',desc:'Explosion rétro de pixels colorés. Nostalgie gaming.',icon:'🕹️',price:800,type:'anim',animType:'victory',
+   cssClass:'anim-item'},
+  {id:'anim_rainbow',name:'Rainbow',desc:'Vague arc-en-ciel fluide traversant tout l\'écran.',icon:'🌈',price:800,type:'anim',animType:'victory',
+   cssClass:'anim-item'},
+  // ── ANIMATIONS ALL PERFECT (2000 coins) ──
+  {id:'anim_lightning',name:'Lightning Storm',desc:'Éclairs électriques crépitants sur fond sombre.',icon:'⚡',price:2000,type:'anim',animType:'perfect',
+   cssClass:'anim-perfect'},
+  {id:'anim_galaxy',name:'Galaxy Burst',desc:'Explosion galactique d\'étoiles et nébuleuses.',icon:'🌌',price:2000,type:'anim',animType:'perfect',
+   cssClass:'anim-perfect'},
+  {id:'anim_crown',name:'Crown Royal',desc:'Couronne royale dorée descendant majestueusement.',icon:'👑',price:2000,type:'anim',animType:'perfect',
+   cssClass:'anim-perfect'},
+  {id:'anim_diamond_rain',name:'Diamond Rain',desc:'Pluie de diamants scintillants en cascade.',icon:'💎',price:2000,type:'anim',animType:'perfect',
+   cssClass:'anim-perfect'},
+  {id:'anim_golden_fire',name:'Golden Fire',desc:'Flammes dorées s\'élevant comme un phénix.',icon:'🔥',price:2000,type:'anim',animType:'perfect',
+   cssClass:'anim-perfect'},
+  {id:'anim_aurora',name:'Aurora',desc:'Aurore boréale ondulante en couleurs pastelles.',icon:'🌊',price:2000,type:'anim',animType:'perfect',
+   cssClass:'anim-perfect'},
+  // ── BOOSTS & BOXES ──
   {id:'boost_xp_buy',name:'Boost XP 24h',desc:'Double tous tes gains d\'XP pendant 24 heures.',icon:'⚡',price:1000,type:'boost'},
   {id:'box_common',name:'Box Commune',desc:'Une récompense mystère parmi plusieurs possibilités.',icon:'📦',price:2500,type:'box'},
-  {id:'box_epic',name:'Box Épique',desc:'Récompenses rares et premium. Plus de chances de décro premium.',icon:'🎁',price:5000,type:'box',cssClass:'epic-box'},
-  {id:'quiz_discount',name:'Réduction Quiz Final',desc:'Réduit le stress du prochain Grand Test. Bonus de motivation !',icon:'🎫',price:20000,type:'perk'},
-  {id:'ai_guide',name:'Guide IA Débloqué',desc:'Accès permanent au Guide IA personnalisé. Conseils et exercices sur mesure.',icon:'🤖',price:80000,type:'perk'},
+  {id:'box_epic',name:'Box Épique',desc:'Récompenses rares et premium. Plus de chances de déco premium.',icon:'🎁',price:5000,type:'box',cssClass:'epic-box'},
+  {id:'streak_freeze',name:'Gel de Streak',desc:'Protège ton streak pour un jour manqué. Actif 48h.',icon:'🧊',price:1500,type:'perk'},
+  {id:'quiz_discount',name:'Bonus Moral Quiz',desc:'Réduit le stress du prochain Grand Test.',icon:'🎫',price:20000,type:'perk'},
+  {id:'ai_guide',name:'Guide IA Débloqué',desc:'Accès permanent au Guide IA personnalisé.',icon:'🤖',price:80000,type:'perk'},
 ];
 
+let shopTab='themes';
 function renderShop(){
   const el=document.getElementById('shop-content');
   const inv=ST.inventory;
-  let h=`<div class="tip"><span>🛒</span><p><strong>Boutique</strong> — Dépense tes coins gagnés en faisant des quiz et flashcards parfaits. Les coins ne s'obtiennent <em>qu'avec des leçons parfaites</em> ou dans les boxes.</p></div>`;
-  h+=`<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center;">
-<div style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem 1rem;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;">🪙 ${ST.coins.toLocaleString()} coins</div>
-<div style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:.55rem 1rem;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;">⚡ ${ST.xp.toLocaleString()} XP</div>
-</div>`;
-  // Inventory / equipped
   const equippedTheme=ST.equipped['theme'];
-  const decos=SHOP_ITEMS.filter(i=>i.type==='deco');
-  const others=SHOP_ITEMS.filter(i=>i.type!=='deco');
-  h+='<div class="shop-section-title">🎨 Décorations classiques</div><div class="shop-grid">';
-  decos.forEach(function(item){
-    const owned=(inv[item.id]||0)>0;
-    const eqp=equippedTheme===item.id;
-    let cls='shop-item'+(owned?' owned':'')+(eqp?' equipped':'');
-    let ownedTag=owned?'<span class="owned-tag" style="margin-left:.35rem">Possédé</span>':'';
-    let eqpTag=eqp?'<span class="equipped-tag" style="margin-left:.35rem">Équipé</span>':'';
-    let btnHtml=owned?(eqp?'<button class="shop-buy-btn" style="background:var(--mt)" onclick="equipItem(\'' +item.id+ '\',\'theme\')">Retirer</button>':'<button class="shop-buy-btn" style="background:var(--a3)" onclick="equipItem(\'' +item.id+ '\',\'theme\')">Équiper</button>'):('<button class="shop-buy-btn" onclick="buyItem(\'' +item.id+ '\')" '+(ST.coins<item.price?'disabled':'')+'>Acheter</button>');
-    h+='<div class="'+cls+'"><div class="shop-item-icon">'+item.icon+'</div><div class="shop-item-name">'+item.name+ownedTag+eqpTag+'</div><div class="shop-item-desc">'+item.desc+'</div><div class="shop-item-price">🪙 '+item.price.toLocaleString()+'</div>'+btnHtml+'</div>';
-  });
-  h+='</div><div class="shop-section-title" style="margin-top:1.2rem">🎁 Boosts &amp; Boxes &amp; Perks</div><div class="shop-grid">';
-  others.forEach(function(item){
-    const owned=(inv[item.id]||0)>0;
-    const alreadyActive=(item.id==='ai_guide'&&ST.aiUnlocked)||(item.id==='quiz_discount'&&ST.quizDiscount)||(item.id==='boost_xp_buy'&&isBoostXPActive());
-    let activeTag=alreadyActive?'<span class="owned-tag" style="margin-left:.35rem">Actif</span>':'';
-    let disabled=(ST.coins<item.price||alreadyActive)?'disabled':'';
-    let btnLabel=alreadyActive?'Déjà actif':'Acheter';
-    h+='<div class="shop-item '+(item.cssClass||'')+(owned?' owned':'')+'"><div class="shop-item-icon">'+item.icon+'</div><div class="shop-item-name">'+item.name+activeTag+'</div><div class="shop-item-desc">'+item.desc+'</div><div class="shop-item-price">🪙 '+item.price.toLocaleString()+'</div><button class="shop-buy-btn" onclick="buyItem(\''+item.id+'\')" '+disabled+'>'+btnLabel+'</button></div>';
-  });
-  h+='</div>';
+  const equippedAnimV=ST.equipped['animVictory']||'';
+  const equippedAnimP=ST.equipped['animPerfect']||'';
 
-  // Premium deco (only from boxes)
-  if((inv['deco_premium']||0)>0||(inv['anim_victory']||0)>0){
-    h+='<div class="shop-section-title" style="margin-top:1.2rem">💎 Collection Premium (Box Épique &amp; Légendaire uniquement)</div><div class="shop-grid">';
-    if((inv['deco_premium']||0)>0) h+='<div class="shop-item owned"><div class="shop-item-icon">💎</div><div class="shop-item-name">Décoration Premium</div><div class="shop-item-desc">Obtenu depuis une Box Épique ou Légendaire.</div><div class="shop-item-price" style="color:var(--pu)">🏆 Exclusif</div><button class="shop-buy-btn" style="background:var(--pu)" onclick="equipItem(\'deco_premium\',\'theme\')">Équiper</button></div>';
-    if((inv['anim_victory']||0)>0) h+='<div class="shop-item owned"><div class="shop-item-icon">🏆</div><div class="shop-item-name">Animation Victoire Premium</div><div class="shop-item-desc">Animation exclusive obtenue depuis une Box Légendaire.</div><div class="shop-item-price" style="color:var(--gd)">🏆 Exclusif</div></div>';
+  let h=`<div class="tip" style="margin-bottom:1rem">
+    <span class="ico" style="font-size:1.1rem"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+    <p><strong>Boutique</strong> — Personnalise ton expérience avec des thèmes, animations et boosts !</p>
+  </div>
+  <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+    <div style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .9rem;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;">
+      <span style="color:var(--gd)">🪙</span> ${ST.coins.toLocaleString()} coins
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:.5rem .9rem;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;">
+      <span style="color:var(--a3)">⚡</span> ${ST.xp.toLocaleString()} XP
+    </div>
+  </div>
+  <div class="shop-tabs">
+    <button class="shop-tab${shopTab==='themes'?' active':''}" onclick="setShopTab('themes')">
+      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      Thèmes
+    </button>
+    <button class="shop-tab${shopTab==='premium'?' active':''}" onclick="setShopTab('premium')">
+      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Premium
+    </button>
+    <button class="shop-tab${shopTab==='anims'?' active':''}" onclick="setShopTab('anims')">
+      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M5 3l14 9-14 9V3z"/></svg>
+      Animations
+    </button>
+    <button class="shop-tab${shopTab==='boosts'?' active':''}" onclick="setShopTab('boosts')">
+      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Boosts
+    </button>
+  </div>`;
+
+  if(shopTab==='themes'){
+    const classics=SHOP_ITEMS.filter(i=>i.type==='theme'&&!i.premium);
+    h+='<div class="shop-section-title">🎨 Thèmes classiques — <span style="color:var(--gd);font-weight:700">500 coins</span></div>';
+    h+='<div class="shop-grid">';
+    classics.forEach(function(item){
+      const owned=(inv[item.id]||0)>0;
+      const eqp=equippedTheme===item.id;
+      const p=item.preview;
+      const previewGrad=`linear-gradient(135deg,${p.bg} 0%,${p.a1}22 50%,${p.a2}33 100%)`;
+      const borderStyle=eqp?`border-color:${p.a2};box-shadow:0 0 0 1px ${p.a2}44`:owned?'border-color:rgba(149,224,108,.3)':'';
+      let btnHtml=owned?(eqp?`<button class="shop-buy-btn" style="background:var(--mt)" onclick="equipItem('${item.id}','theme')">Retirer</button>`:`<button class="shop-buy-btn" style="background:var(--a3);color:#0a0d12" onclick="equipItem('${item.id}','theme')">Équiper</button>`):(`<button class="shop-buy-btn" onclick="buyItem('${item.id}')" ${ST.coins<item.price?'disabled':''}>Acheter</button>`);
+      const tags=owned?(eqp?'<span class="equipped-tag" style="margin-left:.3rem">Équipé</span>':'<span class="owned-tag" style="margin-left:.3rem">Possédé</span>'):'';
+      h+=`<div class="shop-item${owned?' owned':''}${eqp?' equipped':''}" style="${borderStyle}">
+        <div class="color-block-preview" style="background:${previewGrad}">
+          <div style="position:absolute;bottom:4px;right:6px;display:flex;gap:3px">
+            <div style="width:10px;height:10px;border-radius:50%;background:${p.a1}"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:${p.a2}"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:${p.a3}"></div>
+          </div>
+        </div>
+        <div class="shop-item-name">${item.icon} ${item.name}${tags}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+        <div class="shop-item-price">🪙 ${item.price.toLocaleString()}</div>
+        ${btnHtml}
+      </div>`;
+    });
     h+='</div>';
   }
+
+  else if(shopTab==='premium'){
+    const premiums=SHOP_ITEMS.filter(i=>i.type==='theme'&&i.premium);
+    h+='<div class="shop-section-title" style="margin-bottom:.4rem">💎 Color Blocks Premium — <span style="color:var(--gd);font-weight:700">1 500 coins</span></div>';
+    h+='<div style="font-size:.72rem;color:var(--mt);margin-bottom:.85rem">Palettes exclusives haute qualité. Impossible à obtenir en box.</div>';
+    h+='<div class="shop-grid">';
+    premiums.forEach(function(item){
+      const owned=(inv[item.id]||0)>0;
+      const eqp=equippedTheme===item.id;
+      const p=item.preview;
+      const previewGrad=`linear-gradient(135deg,${p.bg} 0%,${p.a1}33 40%,${p.a2}44 70%,${p.a3}22 100%)`;
+      const borderStyle=eqp?`border-color:${p.a1};box-shadow:0 0 12px ${p.a1}33`:owned?`border-color:${p.a1}44`:'border-color:rgba(255,217,61,.15)';
+      let btnHtml=owned?(eqp?`<button class="shop-buy-btn" style="background:var(--mt)" onclick="equipItem('${item.id}','theme')">Retirer</button>`:`<button class="shop-buy-btn" style="background:linear-gradient(135deg,${p.a1},${p.a2});color:#0a0d12;border:none" onclick="equipItem('${item.id}','theme')">Équiper ✨</button>`):(`<button class="shop-buy-btn" style="background:linear-gradient(135deg,rgba(255,217,61,.8),rgba(255,159,67,.8));color:#0a0d12;border:none" onclick="buyItem('${item.id}')" ${ST.coins<item.price?'disabled':''}>Acheter</button>`);
+      const tags=owned?(eqp?'<span class="equipped-tag" style="margin-left:.3rem">Équipé</span>':'<span class="owned-tag" style="margin-left:.3rem">Possédé</span>'):'';
+      h+=`<div class="shop-item${owned?' owned':''}${eqp?' equipped':''}" style="${borderStyle};position:relative">
+        <div class="shop-premium-badge">Premium</div>
+        <div class="color-block-preview" style="background:${previewGrad}">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;opacity:.6">${item.icon}</div>
+          <div style="position:absolute;bottom:4px;right:6px;display:flex;gap:3px">
+            <div style="width:10px;height:10px;border-radius:50%;background:${p.a1}"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:${p.a2}"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:${p.a3}"></div>
+          </div>
+        </div>
+        <div class="shop-item-name">${item.name}${tags}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+        <div class="shop-item-price" style="color:var(--gd)">🪙 ${item.price.toLocaleString()}</div>
+        ${btnHtml}
+      </div>`;
+    });
+    h+='</div>';
+  }
+
+  else if(shopTab==='anims'){
+    const victory=SHOP_ITEMS.filter(i=>i.type==='anim'&&i.animType==='victory');
+    const perfect=SHOP_ITEMS.filter(i=>i.type==='anim'&&i.animType==='perfect');
+
+    h+='<div class="shop-section-title">🎊 Animations Victoire — <span style="color:var(--a2);font-weight:700">800 coins</span></div>';
+    h+='<div style="font-size:.72rem;color:var(--mt);margin-bottom:.75rem">S\'active quand tu valides un quiz ou une leçon.</div>';
+    h+='<div class="shop-grid">';
+    victory.forEach(function(item){
+      const owned=(inv[item.id]||0)>0;
+      const eqp=equippedAnimV===item.id;
+      let btnHtml=owned?(eqp?`<button class="shop-buy-btn" style="background:var(--mt)" onclick="equipItem('${item.id}','animVictory')">Retirer</button>Équipé`:`<button class="shop-buy-btn" style="background:var(--a2)" onclick="equipItem('${item.id}','animVictory')">Équiper</button>`):(`<button class="shop-buy-btn" onclick="buyItem('${item.id}')" ${ST.coins<item.price?'disabled':''}>Acheter</button>`);
+      const eqpTag=eqp?'<span class="equipped-tag" style="margin-left:.3rem">Équipé</span>':'';
+      const ownedTag=owned&&!eqp?'<span class="owned-tag" style="margin-left:.3rem">Possédé</span>':'';
+      h+=`<div class="shop-item anim-item${owned?' owned':''}${eqp?' equipped':''}">
+        <div class="shop-item-icon">${item.icon}</div>
+        <div class="shop-item-name">${item.name}${eqpTag}${ownedTag}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+        <div class="shop-item-price">🪙 ${item.price.toLocaleString()}</div>
+        <button class="shop-buy-btn" style="margin-bottom:.3rem;background:rgba(78,205,196,.2);border:1px solid var(--a2);color:var(--a2)" onclick="previewAnim('${item.id}')">▶ Aperçu</button>
+        ${btnHtml}
+      </div>`;
+    });
+    h+='</div>';
+
+    h+='<div class="shop-section-title" style="margin-top:1.2rem">✨ Animations All Perfect — <span style="color:var(--gd);font-weight:700">2 000 coins</span></div>';
+    h+='<div style="font-size:.72rem;color:var(--mt);margin-bottom:.75rem">S\'active uniquement en quiz 100% parfait. Rare et impressionnant.</div>';
+    h+='<div class="shop-grid">';
+    perfect.forEach(function(item){
+      const owned=(inv[item.id]||0)>0;
+      const eqp=equippedAnimP===item.id;
+      let btnHtml=owned?(eqp?`<button class="shop-buy-btn" style="background:var(--mt)" onclick="equipItem('${item.id}','animPerfect')">Retirer</button>`:`<button class="shop-buy-btn" style="background:var(--gd);color:#0a0d12" onclick="equipItem('${item.id}','animPerfect')">Équiper</button>`):(`<button class="shop-buy-btn" style="background:linear-gradient(135deg,rgba(255,217,61,.8),rgba(199,125,255,.8));color:#0a0d12;border:none" onclick="buyItem('${item.id}')" ${ST.coins<item.price?'disabled':''}>Acheter</button>`);
+      const eqpTag=eqp?'<span class="equipped-tag" style="margin-left:.3rem;border-color:rgba(255,217,61,.3);color:var(--gd)">Équipé</span>':'';
+      const ownedTag=owned&&!eqp?'<span class="owned-tag" style="margin-left:.3rem">Possédé</span>':'';
+      h+=`<div class="shop-item anim-perfect${owned?' owned':''}${eqp?' equipped':''}">
+        <div class="shop-item-icon">${item.icon}</div>
+        <div class="shop-item-name">${item.name}${eqpTag}${ownedTag}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+        <div class="shop-item-price" style="color:var(--gd)">🪙 ${item.price.toLocaleString()}</div>
+        <button class="shop-buy-btn" style="margin-bottom:.3rem;background:rgba(255,217,61,.1);border:1px solid rgba(255,217,61,.3);color:var(--gd)" onclick="previewAnim('${item.id}')">▶ Aperçu</button>
+        ${btnHtml}
+      </div>`;
+    });
+    h+='</div>';
+  }
+
+  else if(shopTab==='boosts'){
+    const boosts=SHOP_ITEMS.filter(i=>['boost','box','perk'].includes(i.type));
+    h+='<div class="shop-section-title">🎁 Boosts, Boxes &amp; Perks</div>';
+    h+='<div class="shop-grid">';
+    boosts.forEach(function(item){
+      const owned=(inv[item.id]||0)>0;
+      const alreadyActive=(item.id==='ai_guide'&&ST.aiUnlocked)||(item.id==='quiz_discount'&&ST.quizDiscount)||(item.id==='boost_xp_buy'&&isBoostXPActive())||(item.id==='streak_freeze'&&ST.streakFreezeExpiry>Date.now());
+      let activeTag=alreadyActive?'<span class="owned-tag" style="margin-left:.35rem">Actif</span>':'';
+      let disabled=(ST.coins<item.price||alreadyActive)?'disabled':'';
+      let btnLabel=alreadyActive?'Déjà actif':'Acheter';
+      h+=`<div class="shop-item ${item.cssClass||''}${owned?' owned':''}">
+        <div class="shop-item-icon">${item.icon}</div>
+        <div class="shop-item-name">${item.name}${activeTag}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+        <div class="shop-item-price">🪙 ${item.price.toLocaleString()}</div>
+        <button class="shop-buy-btn" onclick="buyItem('${item.id}')" ${disabled}>${btnLabel}</button>
+      </div>`;
+    });
+    h+='</div>';
+  }
+
   el.innerHTML=h;
+}
+
+function setShopTab(tab){shopTab=tab;renderShop();}
+
+function previewAnim(id){
+  playAnimation(id);
 }
 
 function buyItem(id){
   const item=SHOP_ITEMS.find(i=>i.id===id);
   if(!item||ST.coins<item.price)return;
   ST.coins-=item.price;
-  if(item.type==='deco'){ST.inventory[id]=(ST.inventory[id]||0)+1;}
+  if(item.type==='theme'||item.type==='deco'){ST.inventory[id]=(ST.inventory[id]||0)+1;}
+  else if(item.type==='anim'){ST.inventory[id]=(ST.inventory[id]||0)+1;}
   else if(item.type==='box'){
     if(id==='box_common') openBox('common');
     else if(id==='box_epic') openBox('epic');
@@ -2105,6 +2689,7 @@ function buyItem(id){
   } else if(item.type==='perk'){
     if(id==='ai_guide') ST.aiUnlocked=true;
     else if(id==='quiz_discount') ST.quizDiscount=true;
+    else if(id==='streak_freeze'){ST.streakFreezeExpiry=Date.now()+48*60*60*1000;}
   }
   save();
   renderShop();
@@ -2122,25 +2707,55 @@ function equipItem(id,slot){
 function applyEquippedTheme(){
   const t=ST.equipped['theme'];
   const themes={
-    deco_leaf:{a1:'#7ec67a',a2:'#4ecdc4',a3:'#95e06c',bg:'#080f0a'},
-    deco_moon:{a1:'#7b8fe8',a2:'#a0b0ff',a3:'#c77dff',bg:'#08080f'},
-    deco_star:{a1:'#ffd93d',a2:'#ffe680',a3:'#ffb347',bg:'#0d0a00'},
-    deco_wave:{a1:'#4ec9cd',a2:'#45b8e8',a3:'#7dd3fc',bg:'#020d14'},
-    deco_diamond:{a1:'#e879f9',a2:'#a855f7',a3:'#c084fc',bg:'#0d020f'},
+    // Classic themes (500 coins)
+    theme_dark_blue:{a1:'#4a9eff',a2:'#6bb8ff',a3:'#90d0ff',bg:'#0a1628',s1:'#0d1e38',s2:'#122447',bd:'#1e3558',bodyClass:'theme-dark-blue'},
+    theme_purple_night:{a1:'#c77dff',a2:'#a855f7',a3:'#e879f9',bg:'#120820',s1:'#1a0f2e',s2:'#24163d',bd:'#342050',bodyClass:'theme-purple-night'},
+    theme_forest_green:{a1:'#7ec67a',a2:'#4caf50',a3:'#95e06c',bg:'#071409',s1:'#0d1e0e',s2:'#122814',bd:'#1c3c1e',bodyClass:'theme-forest-green'},
+    theme_sunset_orange:{a1:'#ff9f43',a2:'#ff7043',a3:'#ffd93d',bg:'#1a0c04',s1:'#261208',s2:'#301810',bd:'#4a2818',bodyClass:'theme-sunset-orange'},
+    theme_rose_gold:{a1:'#f48fb1',a2:'#f06292',a3:'#f8bbd9',bg:'#1a0c12',s1:'#24101a',s2:'#2e1622',bd:'#4a2035',bodyClass:'theme-rose-gold'},
+    theme_ocean_teal:{a1:'#26c6da',a2:'#00acc1',a3:'#80deea',bg:'#041418',s1:'#081e24',s2:'#0e2830',bd:'#164048',bodyClass:'theme-ocean-teal'},
+    // Premium themes (1500 coins)
+    theme_neon_cyberpunk:{a1:'#ff00ff',a2:'#00ffff',a3:'#ff0080',bg:'#0f0025',s1:'#180038',s2:'#22004a',bd:'#38006e',bodyClass:'theme-neon-cyberpunk'},
+    theme_luxury_gold:{a1:'#ffd700',a2:'#ffb300',a3:'#fff176',bg:'#1a1200',s1:'#241a00',s2:'#302200',bd:'#4a3600',bodyClass:'theme-luxury-gold'},
+    theme_cherry_blossom:{a1:'#ff80ab',a2:'#f48fb1',a3:'#ffc1e3',bg:'#1a0818',s1:'#240e22',s2:'#2e142c',bd:'#4a2048',bodyClass:'theme-cherry-blossom'},
+    theme_deep_space:{a1:'#3d5afe',a2:'#448aff',a3:'#82b1ff',bg:'#020514',s1:'#040a20',s2:'#060e2c',bd:'#0c1840',bodyClass:'theme-deep-space'},
+    theme_lava:{a1:'#ff1744',a2:'#ff5722',a3:'#ff8a65',bg:'#1a0400',s1:'#240600',s2:'#300800',bd:'#4a1000',bodyClass:'theme-lava'},
+    theme_arctic_ice:{a1:'#80d8ff',a2:'#40c4ff',a3:'#b3e5fc',bg:'#021020',s1:'#041828',s2:'#062034',bd:'#0c3048',bodyClass:'theme-arctic-ice'},
+    theme_toxic_jungle:{a1:'#76ff03',a2:'#64dd17',a3:'#ccff90',bg:'#041a04',s1:'#082408',s2:'#0c2e0c',bd:'#164816',bodyClass:'theme-toxic-jungle'},
+    theme_midnight_rose:{a1:'#e91e63',a2:'#ad1457',a3:'#f48fb1',bg:'#14020e',s1:'#1e0418',s2:'#280622',bd:'#3c0c34',bodyClass:'theme-midnight-rose'},
+    theme_solar_flare:{a1:'#ff6d00',a2:'#ffab00',a3:'#ffe57f',bg:'#1a0c00',s1:'#241200',s2:'#301800',bd:'#4a2c00',bodyClass:'theme-solar-flare'},
+    theme_cosmic_violet:{a1:'#9c27b0',a2:'#6a1b9a',a3:'#ce93d8',bg:'#0e041a',s1:'#160826',s2:'#1e0c32',bd:'#2e1450',bodyClass:'theme-cosmic-violet'},
+    // Legacy compatibility
+    deco_leaf:{a1:'#7ec67a',a2:'#4ecdc4',a3:'#95e06c',bg:'#080f0a',s1:'#0d1a0f',s2:'#122414',bd:'#1c3a1e'},
+    deco_moon:{a1:'#7b8fe8',a2:'#a0b0ff',a3:'#c77dff',bg:'#08080f',s1:'#0f1020',s2:'#161828',bd:'#20243c'},
+    deco_star:{a1:'#ffd93d',a2:'#ffe680',a3:'#ffb347',bg:'#0d0a00',s1:'#1a1400',s2:'#241e00',bd:'#3a3000'},
+    deco_wave:{a1:'#4ec9cd',a2:'#45b8e8',a3:'#7dd3fc',bg:'#020d14',s1:'#061420',s2:'#0a1c2c',bd:'#102c3c'},
+    deco_diamond:{a1:'#e879f9',a2:'#a855f7',a3:'#c084fc',bg:'#0d020f',s1:'#170420',s2:'#20082e',bd:'#32104a'},
     deco_premium:{a1:'#ff6b6b',a2:'#ffd93d',a3:'#ff9f43',bg:'#0f0a00'},
   };
   const root=document.documentElement;
+  const body=document.body;
+  // Remove all theme classes
+  body.className=body.className.replace(/theme-\S+/g,'').trim();
+
   if(t&&themes[t]){
     const th=themes[t];
     root.style.setProperty('--a1',th.a1);
     root.style.setProperty('--a2',th.a2);
     root.style.setProperty('--a3',th.a3);
     root.style.setProperty('--bg',th.bg);
+    if(th.s1) root.style.setProperty('--s1',th.s1);
+    if(th.s2) root.style.setProperty('--s2',th.s2);
+    if(th.bd) root.style.setProperty('--bd',th.bd);
+    if(th.bodyClass) body.classList.add(th.bodyClass);
   } else {
     root.style.setProperty('--a1','#ff6b6b');
     root.style.setProperty('--a2','#4ecdc4');
     root.style.setProperty('--a3','#95e06c');
     root.style.setProperty('--bg','#0a0d12');
+    root.style.setProperty('--s1','#111620');
+    root.style.setProperty('--s2','#1a2030');
+    root.style.setProperty('--bd','#252d3d');
   }
 }
 
@@ -2157,7 +2772,7 @@ function renderGuide(){
 <div style="font-size:3rem;margin-bottom:.6rem">🔒</div>
 <h2 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.4rem">Guide IA non débloqué</h2>
 <p style="font-size:.78rem;color:var(--mt);margin-bottom:1rem">Pour débloquer le Guide IA, tu peux :<br>• Atteindre 7 leçons parfaites consécutives (2% de chance)<br>• Ouvrir une Box Commune ou Épique (faible probabilité)<br>• L'acheter en boutique pour <b style="color:var(--gd)">80 000 coins</b></p>
-<button class="btn-p" onclick="showView('shop',document.querySelector('.ntab:nth-child(9)'))">🛒 Aller à la Boutique</button>
+<button class="btn-p" onclick="showView('shop',null)">🛒 Aller à la Boutique</button>
 </div>`;
     return;
   }
@@ -2241,8 +2856,12 @@ function toast(m){const t=document.getElementById('toast');t.textContent=m;t.cla
 function showView(id,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.snav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+id).classList.add('active');
   if(btn) btn.classList.add('active');
+  // Also highlight sidebar item
+  const sbItem=document.querySelector(`.snav-item[data-view="${id}"]`);
+  if(sbItem) sbItem.classList.add('active');
   if(id==='fc')initFC();
   if(id==='list10k'){buildL10kFilt();renderL10k();}
   if(id==='gt')renderGTIntro();
@@ -2262,14 +2881,14 @@ function wCard(w){
   if(w.full){
     return`<div class="wcard${ok?' ok':''}" style="--cc:${CC[w.cat]||'#888'}">
 <div class="wen">${w.en}</div><div class="wfr">${w.fr}</div>
-<div class="wipa"><button class="spk" onclick="speak('${es}',event)">🔊</button>${w.ipa}</div>
+<div class="wipa"><button class="spk-btn" onclick="speak('${es}',event)"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>${w.ipa}</div>
 <div class="wex">${w.ex}</div><div class="wmn">${w.mn}</div>
 <div class="wfooter"><span class="wcat">${w.cat}</span><button class="mbtn" onclick="tog('${es}',event)">${ok?'✓ Appris':'+ Marquer'}</button></div>
 </div>`;
   } else {
     return`<div class="wcard${ok?' ok':''}" style="--cc:${CC[w.cat]||'#888'}">
 <div class="wen">${w.en}</div><div class="wfr">${w.fr}</div>
-<div class="wipa"><button class="spk" onclick="speak('${es}',event)">🔊</button>${w.ipa}</div>
+<div class="wipa"><button class="spk-btn" onclick="speak('${es}',event)"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>${w.ipa}</div>
 <div class="wfooter"><span class="wcat">${w.cat}</span><button class="mbtn" onclick="tog('${es}',event)">${ok?'✓ Appris':'+ Marquer'}</button></div>
 </div>`;
   }
@@ -2329,7 +2948,7 @@ ${ps?`<div style="font-size:.75rem;color:var(--mt);margin-top:.3rem">Ton meilleu
 <div class="lvl-hd"><span class="lvl-badge">Niveau ${l}</span><span class="lvl-title">${meta.n}</span><span class="lvl-desc">${meta.d}</span><div class="lvl-line"></div><span class="lvl-stat">${lc2}/${ws.length}</span></div>
 <div class="wgrid">${ws.map(wCard).join('')}</div></div>`;
       });
-      const rb=allLearned&&!hasPassed?`<div class="ready-b"><p>🎉 Tous les mots cochés ! <b>Lance le Grand Test</b> pour valider et débloquer la suite (≥98% requis).</p><button class="big-test-btn" onclick="showView('gt',document.querySelector('.ntab:nth-child(7))'))">🏆 Grand Test</button></div>`:'';
+      const rb=allLearned&&!hasPassed?`<div class="ready-b"><p>🎉 Tous les mots cochés ! <b>Lance le Grand Test</b> pour valider et débloquer la suite (≥98% requis).</p><button class="big-test-btn" onclick="showView('gt',null)">🏆 Grand Test</button></div>`:'';
       body=`<div class="pal-body">${rb}${lvHtml}</div>`;
     }
 
@@ -2868,6 +3487,7 @@ function endGT(){
   if(passed){
     // Grand Test réussi = récompense spéciale (box légendaire de level)
     const lvInfo=currentLevel();
+    triggerVictoryAnim(true);
     openBoxLegendary();
   }
   document.getElementById('gt-result').innerHTML=`
@@ -2879,17 +3499,578 @@ function endGT(){
 ${gtMissed.length?`<div style="text-align:left"><h3 style="font-family:'Syne',sans-serif;font-size:.85rem;font-weight:800;color:var(--a1);margin-bottom:.4rem">📌 Mots à retravailler (${gtMissed.length})</h3>${missedHtml}</div>`:''}
 <div class="gt-res-btns">
 ${!passed?`<button class="gt-rbtn retry" onclick="startGT(${gtPalier})">🔄 Réessayer</button>`:''}
-${passed&&unlocked?`<button class="gt-rbtn unlock" onclick="showView('path',document.querySelector('.ntab'))">📍 Voir le nouveau palier</button>`:''}
+${passed&&unlocked?`<button class="gt-rbtn unlock" onclick="showView('path',null)">📍 Voir le nouveau palier</button>`:''}
 <button class="gt-rbtn back" onclick="renderGTIntro()">← Retour</button>
 </div>`;
 }
 
 // ══════════════════════════════════════════════
-// INIT
+// ANIMATION ENGINE — 12 animations canvas
 // ══════════════════════════════════════════════
-checkDailyLogin();
+function playAnimation(id){
+  const canvas=document.getElementById('anim-canvas');
+  if(!canvas) return;
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const animMap={
+    // Victory (classic)
+    anim_confettis:animConfettis,
+    anim_etoiles:animEtoiles,
+    anim_feu_dartifice:animFeuDartifice,
+    anim_bulles:animBulles,
+    anim_pixel_explosion:animPixelExplosion,
+    anim_rainbow:animRainbow,
+    // Perfect (premium)
+    anim_lightning:animLightning,
+    anim_galaxy:animGalaxy,
+    anim_crown:animCrown,
+    anim_diamond_rain:animDiamondRain,
+    anim_golden_fire:animGoldenFire,
+    anim_aurora:animAurora,
+  };
+
+  // Use equipped, or fallback to basic confettis
+  const equippedV=ST.equipped['animVictory'];
+  const equippedP=ST.equipped['animPerfect'];
+
+  let animId=id;
+  if(!id){
+    // Auto: if perfect use perfect anim, else victory
+    animId=equippedV||'anim_confettis';
+  }
+  if(id==='perfect'){
+    animId=equippedP||equippedV||'anim_confettis';
+  }
+
+  const fn=animMap[animId]||animConfettis;
+  fn(ctx,canvas.width,canvas.height);
+  setTimeout(()=>{canvas.style.display='none';ctx.clearRect(0,0,canvas.width,canvas.height);},3200);
+}
+
+function triggerVictoryAnim(perfect){
+  const equippedV=ST.equipped['animVictory'];
+  const equippedP=ST.equipped['animPerfect'];
+  if(perfect&&equippedP) playAnimation(equippedP);
+  else if(equippedV) playAnimation(equippedV);
+  else playAnimation('anim_confettis');
+}
+
+// ── CONFETTIS ──
+function animConfettis(ctx,W,H){
+  const parts=[];
+  const colors=['#ffd93d','#ff6b6b','#4ecdc4','#c77dff','#95e06c','#ff9f43','#00e5ff','#ff80ab'];
+  for(let i=0;i<160;i++) parts.push({x:Math.random()*W,y:-10-Math.random()*H*.5,vx:(Math.random()-0.5)*4,vy:2+Math.random()*4,rot:Math.random()*360,vrot:(Math.random()-0.5)*10,w:7+Math.random()*8,h:4+Math.random()*4,c:colors[Math.floor(Math.random()*colors.length)]});
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    parts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy+Math.sin(t*.05+p.x*.01)*0.5;p.rot+=p.vrot;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.c;ctx.globalAlpha=p.y>H?0:Math.min(1,(H-p.y)/H*2);
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+    });
+    t++;if(t<200) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── ÉTOILES FILANTES ──
+function animEtoiles(ctx,W,H){
+  const stars=[];
+  for(let i=0;i<35;i++) stars.push({x:Math.random()*W,y:Math.random()*H*.5,vx:8+Math.random()*12,vy:3+Math.random()*5,len:80+Math.random()*120,c:`hsl(${Math.random()*60+200},100%,80%)`,alpha:1});
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.x+=s.vx;s.y+=s.vy;s.alpha=Math.max(0,1-t/120);
+      ctx.save();ctx.globalAlpha=s.alpha;
+      const grad=ctx.createLinearGradient(s.x-s.len,s.y-s.vy/s.vx*s.len,s.x,s.y);
+      grad.addColorStop(0,'transparent');grad.addColorStop(1,s.c);
+      ctx.strokeStyle=grad;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s.x-s.len,s.y-s.vy/s.vx*s.len);ctx.lineTo(s.x,s.y);ctx.stroke();
+      ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(s.x,s.y,2.5,0,Math.PI*2);ctx.fill();ctx.restore();
+    });
+    t++;if(t<150) requestAnimationFrame(frame);
+  }
+  setTimeout(frame,100);
+}
+
+// ── FEU D'ARTIFICE ──
+function animFeuDartifice(ctx,W,H){
+  const bursts=[];
+  function burst(x,y,hue){
+    const b={x,y,parts:[]};
+    for(let i=0;i<60;i++){const a=Math.random()*Math.PI*2;const s=2+Math.random()*4;b.parts.push({vx:Math.cos(a)*s,vy:Math.sin(a)*s,alpha:1,c:`hsl(${hue+Math.random()*40},100%,${60+Math.random()*30}%)`});}
+    bursts.push(b);
+  }
+  const hues=[50,200,280,0,120];
+  hues.forEach((h,i)=>setTimeout(()=>burst(W*.2+Math.random()*W*.6,H*.1+Math.random()*H*.5,h),i*300));
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    bursts.forEach(b=>b.parts.forEach(p=>{
+      b.x;p.alpha=Math.max(0,p.alpha-.012);p.vx*=0.97;p.vy+=0.06;p.vy*=0.97;
+      ctx.save();ctx.globalAlpha=p.alpha;ctx.fillStyle=p.c;
+      ctx.beginPath();ctx.arc(b.x+p.vx*t*.8,b.y+p.vy*t*.8,2,0,Math.PI*2);ctx.fill();ctx.restore();
+    }));
+    t++;if(t<200) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── BULLES ──
+function animBulles(ctx,W,H){
+  const bubbles=[];
+  for(let i=0;i<60;i++) bubbles.push({x:Math.random()*W,y:H+Math.random()*200,r:8+Math.random()*24,vy:1.5+Math.random()*2.5,vx:(Math.random()-.5)*1.5,hue:Math.random()*360,alpha:0.7});
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    bubbles.forEach(b=>{
+      b.y-=b.vy;b.x+=Math.sin(t*.03+b.y*.01)*b.vx;
+      const a=Math.max(0,Math.min(0.7,(H-b.y)/H*2));
+      ctx.save();ctx.globalAlpha=a;
+      const grad=ctx.createRadialGradient(b.x-b.r*.3,b.y-b.r*.3,b.r*.1,b.x,b.y,b.r);
+      grad.addColorStop(0,'rgba(255,255,255,.4)');
+      grad.addColorStop(0.5,`hsla(${b.hue},80%,70%,.2)`);
+      grad.addColorStop(1,`hsla(${b.hue},80%,60%,.5)`);
+      ctx.fillStyle=grad;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=`hsla(${b.hue},80%,80%,.6)`;ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
+    });
+    t++;if(t<220) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── PIXEL EXPLOSION ──
+function animPixelExplosion(ctx,W,H){
+  const pixels=[];
+  const colors=['#ff0','#0ff','#f0f','#0f0','#f00','#00f','#fff'];
+  const cx=W/2,cy=H/2;
+  for(let i=0;i<200;i++){const a=Math.random()*Math.PI*2;const s=1+Math.random()*8;pixels.push({x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,size:4+Math.random()*8,c:colors[i%colors.length],alpha:1});}
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    pixels.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.alpha=Math.max(0,1-t/120);p.vx*=.99;
+      ctx.save();ctx.globalAlpha=p.alpha;ctx.fillStyle=p.c;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);ctx.restore();
+    });
+    t++;if(t<160) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── RAINBOW ──
+function animRainbow(ctx,W,H){
+  let t=0;
+  function frame(){
+    const alpha=t<20?t/20:t>120?Math.max(0,(160-t)/40):1;
+    ctx.clearRect(0,0,W,H);
+    const bw=W/7;
+    const colors=['#ff0000','#ff7700','#ffff00','#00cc00','#0055ff','#8800ff','#ff00ff'];
+    colors.forEach((c,i)=>{
+      const x=i*bw-bw*(1-Math.min(1,t/30));
+      const grad=ctx.createLinearGradient(x,0,x,H);
+      grad.addColorStop(0,c+'cc');grad.addColorStop(1,c+'22');
+      ctx.save();ctx.globalAlpha=alpha*.6;ctx.fillStyle=grad;ctx.fillRect(x,0,bw+2,H);ctx.restore();
+    });
+    t++;if(t<160) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── LIGHTNING STORM ──
+function animLightning(ctx,W,H){
+  function bolt(x1,y1,x2,y2,depth){
+    if(depth===0){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();return;}
+    const mx=(x1+x2)/2+(Math.random()-.5)*60/depth;
+    const my=(y1+y2)/2+(Math.random()-.5)*60/depth;
+    bolt(x1,y1,mx,my,depth-1);bolt(mx,my,x2,y2,depth-1);
+  }
+  let t=0;
+  function frame(){
+    if(t%15===0){
+      ctx.clearRect(0,0,W,H);
+      ctx.save();ctx.strokeStyle=`rgba(100,200,255,${0.6+Math.random()*.4})`;ctx.lineWidth=1.5+Math.random()*2;ctx.shadowBlur=20;ctx.shadowColor='#00ffff';
+      bolt(W*.2+Math.random()*W*.6,0,W*.1+Math.random()*W*.8,H*.6+Math.random()*H*.4,5);ctx.restore();
+    } else if(t%15>5){ctx.clearRect(0,0,W,H);}
+    t++;if(t<200) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── GALAXY BURST ──
+function animGalaxy(ctx,W,H){
+  const cx=W/2,cy=H/2;const stars=[];
+  for(let i=0;i<300;i++){const a=Math.random()*Math.PI*2;const r=Math.random()*10;
+    stars.push({angle:a,radius:r,speed:.01+Math.random()*.04,size:1+Math.random()*2.5,hue:200+Math.random()*160,alpha:Math.random()});}
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    const expansion=Math.min(1,t/60);
+    stars.forEach(s=>{
+      s.angle+=s.speed;s.radius+=s.speed*3*expansion;
+      const x=cx+Math.cos(s.angle)*s.radius*expansion*20;
+      const y=cy+Math.sin(s.angle)*s.radius*expansion*20;
+      const a=Math.max(0,Math.min(s.alpha,1-(s.radius*expansion*20)/(Math.max(W,H))));
+      ctx.save();ctx.globalAlpha=a;ctx.fillStyle=`hsl(${s.hue},100%,80%)`;ctx.shadowBlur=8;ctx.shadowColor=`hsl(${s.hue},100%,80%)`;
+      ctx.beginPath();ctx.arc(x,y,s.size,0,Math.PI*2);ctx.fill();ctx.restore();
+    });
+    t++;if(t<200) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── CROWN ROYAL ──
+function animCrown(ctx,W,H){
+  let t=0;
+  const cx=W/2;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    const y=Math.max(H*.15,H*.8-t*3);
+    const scale=Math.min(1,t/40);
+    const alpha=t>120?Math.max(0,(160-t)/40):1;
+    ctx.save();ctx.globalAlpha=alpha;ctx.translate(cx,y);ctx.scale(scale,scale);
+    // Crown shape
+    ctx.fillStyle='#ffd700';ctx.shadowBlur=30;ctx.shadowColor='#ffb300';
+    ctx.beginPath();ctx.moveTo(-60,30);ctx.lineTo(-60,-10);ctx.lineTo(-40,20);ctx.lineTo(-20,-30);ctx.lineTo(0,20);ctx.lineTo(20,-30);ctx.lineTo(40,20);ctx.lineTo(60,-10);ctx.lineTo(60,30);ctx.closePath();ctx.fill();
+    // Gems
+    ['#ff0055','#00ffff','#ff00ff'].forEach((c,i)=>{ctx.fillStyle=c;ctx.shadowColor=c;ctx.beginPath();ctx.arc(-30+i*30,-10,8,0,Math.PI*2);ctx.fill();});
+    ctx.restore();
+    // Sparkles
+    for(let i=0;i<3;i++){const sx=cx+(Math.sin(t*.1+i)*100);const sy=y+(Math.cos(t*.1+i*1.3)*60);
+      ctx.save();ctx.globalAlpha=alpha*Math.abs(Math.sin(t*.1+i));ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sx,sy,3,0,Math.PI*2);ctx.fill();ctx.restore();}
+    t++;if(t<200) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── DIAMOND RAIN ──
+function animDiamondRain(ctx,W,H){
+  const diamonds=[];
+  for(let i=0;i<80;i++) diamonds.push({x:Math.random()*W,y:-Math.random()*H,vy:2+Math.random()*4,size:4+Math.random()*12,hue:200+Math.random()*60,rot:Math.random()*360,vrot:(Math.random()-.5)*5});
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    diamonds.forEach(d=>{
+      d.y+=d.vy;d.rot+=d.vrot;
+      const a=d.y>H?0:Math.min(0.9,(H-d.y)/H*2);
+      ctx.save();ctx.globalAlpha=a;ctx.translate(d.x,d.y);ctx.rotate(d.rot*Math.PI/180);
+      ctx.fillStyle=`hsl(${d.hue},100%,80%)`;ctx.shadowBlur=15;ctx.shadowColor=`hsl(${d.hue},100%,80%)`;
+      ctx.beginPath();ctx.moveTo(0,-d.size);ctx.lineTo(d.size*.6,0);ctx.lineTo(0,d.size);ctx.lineTo(-d.size*.6,0);ctx.closePath();ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.moveTo(0,-d.size);ctx.lineTo(d.size*.6,0);ctx.lineTo(0,0);ctx.closePath();ctx.fill();
+      ctx.restore();
+    });
+    t++;if(t<200) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── GOLDEN FIRE ──
+function animGoldenFire(ctx,W,H){
+  const particles=[];
+  function spawnFlames(){
+    for(let i=0;i<5;i++) particles.push({x:W*.2+Math.random()*W*.6,y:H+10,vx:(Math.random()-.5)*2,vy:-(2+Math.random()*5),size:10+Math.random()*20,alpha:1,hue:20+Math.random()*30});
+  }
+  let t=0;
+  function frame(){
+    if(t%3===0) spawnFlames();
+    ctx.clearRect(0,0,W,H);
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];p.x+=p.vx+Math.sin(t*.05+p.y*.01);p.y+=p.vy;p.vy*=0.98;p.size*=0.97;p.alpha-=0.012;
+      if(p.alpha<=0){particles.splice(i,1);continue;}
+      ctx.save();ctx.globalAlpha=p.alpha;
+      const grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);
+      grad.addColorStop(0,'#fff');grad.addColorStop(0.2,`hsl(${p.hue},100%,80%)`);grad.addColorStop(0.6,`hsl(${p.hue+20},100%,50%)`);grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.restore();
+    }
+    t++;if(t<220) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ── AURORA ──
+function animAurora(ctx,W,H){
+  let t=0;
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    const alpha=t<20?t/20:t>140?Math.max(0,(180-t)/40):1;
+    const waves=[{color:'#00ffcc',offset:0,speed:.008},{color:'#9933ff',offset:2,speed:.006},{color:'#00ccff',offset:4,speed:.01},{color:'#ff66cc',offset:6,speed:.007}];
+    waves.forEach(w=>{
+      ctx.save();ctx.globalAlpha=alpha*.25;
+      ctx.beginPath();ctx.moveTo(0,H);
+      for(let x=0;x<=W;x+=5){const y=H*.3+Math.sin(x*.005+t*w.speed+w.offset)*H*.15+Math.sin(x*.01+t*w.speed*.5+w.offset)*H*.1;ctx.lineTo(x,y);}
+      ctx.lineTo(W,0);ctx.lineTo(0,0);ctx.closePath();
+      const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,w.color+'aa');grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;ctx.fill();ctx.restore();
+    });
+    t++;if(t<180) requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ══════════════════════════════════════════════
+// AUTH & ACCOUNT SYSTEM
+// ══════════════════════════════════════════════
+const AUTH_KEY='em_account';
+let currentUser=null; // {uid, email, name, isGuest}
+
+function hashSimple(str){
+  // Simple deterministic hash for local password check
+  let h=0;for(let i=0;i<str.length;i++){h=(h<<5)-h+str.charCodeAt(i);h|=0;}
+  return h.toString(36);
+}
+
+function getAccounts(){
+  try{return JSON.parse(localStorage.getItem('em_accounts')||'{}');}catch(e){return{};}
+}
+function saveAccounts(a){localStorage.setItem('em_accounts',JSON.stringify(a));}
+
+function getUserDataKey(uid){return 'em_data_'+uid;}
+
+function openAuthModal(){
+  const m=document.getElementById('auth-modal');
+  m.style.display='flex';
+  switchAuthTab('login');
+}
+
+function closeAuthModal(){
+  document.getElementById('auth-modal').style.display='none';
+}
+
+function switchAuthTab(tab){
+  const isLogin=tab==='login';
+  document.getElementById('auth-tab-login').style.background=isLogin?'var(--s2)':'transparent';
+  document.getElementById('auth-tab-login').style.color=isLogin?'var(--tx)':'var(--mt)';
+  document.getElementById('auth-tab-signup').style.background=!isLogin?'var(--s2)':'transparent';
+  document.getElementById('auth-tab-signup').style.color=!isLogin?'var(--tx)':'var(--mt)';
+  document.getElementById('auth-signup-name').style.display=isLogin?'none':'block';
+  document.getElementById('auth-btn-text').textContent=isLogin?'Se connecter':'Créer mon compte';
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-modal').dataset.tab=tab;
+}
+
+function showAuthError(msg){
+  const el=document.getElementById('auth-error');
+  el.textContent=msg;el.style.display='block';
+}
+
+function submitAuth(){
+  const tab=document.getElementById('auth-modal').dataset.tab||'login';
+  const email=(document.getElementById('auth-email').value||'').trim().toLowerCase();
+  const pass=document.getElementById('auth-pass').value||'';
+  const name=(document.getElementById('auth-name').value||'').trim();
+
+  if(!email||!pass){showAuthError('Remplis tous les champs.');return;}
+  if(!email.includes('@')){showAuthError('Email invalide.');return;}
+  if(pass.length<4){showAuthError('Mot de passe trop court (min. 4 caractères).');return;}
+
+  const accounts=getAccounts();
+
+  if(tab==='signup'){
+    if(!name){showAuthError('Entre un pseudo.');return;}
+    if(accounts[email]){showAuthError('Cet email est déjà utilisé. Connecte-toi !');return;}
+    // Create account
+    const uid='u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);
+    accounts[email]={uid,name,hash:hashSimple(pass)};
+    saveAccounts(accounts);
+    // Migrate existing local data (guest) to new account
+    migrateGuestToAccount(uid);
+    loginUser({uid,email,name,isGuest:false});
+    closeAuthModal();
+    toast('🎉 Compte créé ! Progression sauvegardée.');
+  } else {
+    // Login
+    const acc=accounts[email];
+    if(!acc){showAuthError('Aucun compte trouvé. Inscris-toi !');return;}
+    if(acc.hash!==hashSimple(pass)){showAuthError('Mot de passe incorrect.');return;}
+    // Load this user's data
+    loadUserData(acc.uid);
+    loginUser({uid:acc.uid,email,name:acc.name,isGuest:false});
+    closeAuthModal();
+    toast('👋 Bon retour, '+acc.name+' !');
+  }
+}
+
+function skipAuth(){
+  // Guest mode — uses legacy localStorage keys
+  loginUser({uid:'guest',email:'',name:'Invité',isGuest:true});
+  closeAuthModal();
+}
+
+function loginUser(user){
+  currentUser=user;
+  localStorage.setItem('em_currentUser',JSON.stringify(user));
+  updateSidebarUser();
+}
+
+function signOut(){
+  // Save current state before sign out
+  if(currentUser&&!currentUser.isGuest) saveUserData(currentUser.uid);
+  currentUser=null;
+  localStorage.removeItem('em_currentUser');
+  // Reset state to defaults
+  Object.assign(ST,getDefaultState());
+  save();
+  updateSidebarUser();
+  updateHdr();
+  closeSidebar();
+  openAuthModal();
+}
+
+function getDefaultState(){
+  return{
+    learned:new Set(),unlocked:1,scores:{},irrLearned:new Set(),lessonsDone:new Set(),apiWords:{},
+    coins:0,xp:0,level:1,streak:0,lastLogin:'',dailyDone:'',consecutivePerfect:0,
+    inventory:{},equipped:{},boostXP:0,boostCoins:0,aiUnlocked:false,quizDiscount:false,
+    dailyQuizWords:[],streakFreezeExpiry:0
+  };
+}
+
+function migrateGuestToAccount(uid){
+  // Copy current ST (loaded from default localStorage keys) into user-specific key
+  saveUserData(uid);
+}
+
+function saveUserData(uid){
+  const data={
+    ld:[...ST.learned],ul:ST.unlocked,sc:ST.scores,il:[...ST.irrLearned],
+    les:[...ST.lessonsDone],api:ST.apiWords,coins:ST.coins,xp:ST.xp,level:ST.level,
+    streak:ST.streak,lastLogin:ST.lastLogin,dailyDone:ST.dailyDone,
+    consecutive:ST.consecutivePerfect,inv:ST.inventory,eqp:ST.equipped,
+    boostxp:ST.boostXP,boostcoins:ST.boostCoins,ai:ST.aiUnlocked,qdisc:ST.quizDiscount,
+    dqw:ST.dailyQuizWords,sf:ST.streakFreezeExpiry,ts:Date.now()
+  };
+  localStorage.setItem(getUserDataKey(uid),JSON.stringify(data));
+}
+
+function loadUserData(uid){
+  const raw=localStorage.getItem(getUserDataKey(uid));
+  if(!raw)return; // new account, keep defaults
+  try{
+    const d=JSON.parse(raw);
+    ST.learned=new Set(d.ld||[]);ST.unlocked=d.ul||1;ST.scores=d.sc||{};
+    ST.irrLearned=new Set(d.il||[]);ST.lessonsDone=new Set(d.les||[]);
+    ST.apiWords=d.api||{};ST.coins=d.coins||0;ST.xp=d.xp||0;ST.level=d.level||1;
+    ST.streak=d.streak||0;ST.lastLogin=d.lastLogin||'';ST.dailyDone=d.dailyDone||'';
+    ST.consecutivePerfect=d.consecutive||0;ST.inventory=d.inv||{};ST.equipped=d.eqp||{};
+    ST.boostXP=d.boostxp||0;ST.boostCoins=d.boostcoins||0;ST.aiUnlocked=!!d.ai;
+    ST.quizDiscount=!!d.qdisc;ST.dailyQuizWords=d.dqw||[];ST.streakFreezeExpiry=d.sf||0;
+  }catch(e){console.error('Load user data failed',e);}
+}
+
+function updateSidebarUser(){
+  const user=currentUser;
+  if(!user||user.isGuest){
+    document.getElementById('sb-avatar').textContent='?';
+    document.getElementById('sb-name').textContent='Invité';
+    document.getElementById('sb-email').textContent='Non connecté';
+    document.getElementById('sb-signout-btn').style.display='none';
+    document.getElementById('sb-signin-btn').style.display='block';
+  } else {
+    const initials=user.name.substring(0,2).toUpperCase();
+    document.getElementById('sb-avatar').textContent=initials;
+    document.getElementById('sb-name').textContent=user.name;
+    document.getElementById('sb-email').textContent=user.email;
+    document.getElementById('sb-signout-btn').style.display='block';
+    document.getElementById('sb-signin-btn').style.display='none';
+  }
+  // Sync indicator
+  setSyncStatus(user&&!user.isGuest?'synced':'local');
+}
+
+function setSyncStatus(state){
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-text');
+  if(!dot||!txt)return;
+  dot.className='sync-dot';
+  if(state==='synced'){txt.textContent='Progression sauvegardée';dot.style.background='var(--a3)';}
+  else if(state==='syncing'){dot.classList.add('syncing');txt.textContent='Synchronisation…';dot.style.background='var(--gd)';}
+  else{txt.textContent='Mode local (non connecté)';dot.style.background='var(--mt)';}
+}
+
+// save() is defined further below — the final declaration wins in JS hoisting
+
+// ══════════════════════════════════════════════
+// SIDEBAR / HAMBURGER
+// ══════════════════════════════════════════════
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const ov=document.getElementById('menu-overlay');
+  const btn=document.getElementById('burger-btn');
+  const isOpen=sb.classList.contains('open');
+  if(isOpen){closeSidebar();}else{
+    sb.classList.add('open');ov.classList.add('open');btn.classList.add('open');
+  }
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('menu-overlay').classList.remove('open');
+  document.getElementById('burger-btn').classList.remove('open');
+}
+
+function snavGo(viewId,btn){
+  showView(viewId,btn);
+  // Update active state in sidebar
+  document.querySelectorAll('.snav-item').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  closeSidebar();
+}
+
+// ══════════════════════════════════════════════
+// AUTH INIT
+// ══════════════════════════════════════════════
+function initAuth(){
+  // Try to restore session
+  try{
+    const saved=JSON.parse(localStorage.getItem('em_currentUser')||'null');
+    if(saved){
+      currentUser=saved;
+      if(!saved.isGuest) loadUserData(saved.uid);
+      updateSidebarUser();
+      return; // Already logged in
+    }
+  }catch(e){}
+  // Show auth modal
+  openAuthModal();
+}
+
+// ══════════════════════════════════════════════
+// SAVE (account-aware version — overrides the placeholder above)
+// ══════════════════════════════════════════════
+const _savePatch=null; // not needed
+function save(){
+  localStorage.setItem('em_ld',JSON.stringify([...ST.learned]));
+  localStorage.setItem('em_ul',ST.unlocked);
+  localStorage.setItem('em_sc',JSON.stringify(ST.scores));
+  localStorage.setItem('em_il',JSON.stringify([...ST.irrLearned]));
+  localStorage.setItem('em_les',JSON.stringify([...ST.lessonsDone]));
+  localStorage.setItem('em_api',JSON.stringify(ST.apiWords));
+  localStorage.setItem('em_coins',ST.coins);
+  localStorage.setItem('em_xp',ST.xp);
+  localStorage.setItem('em_level',ST.level);
+  localStorage.setItem('em_streak',ST.streak);
+  localStorage.setItem('em_lastlogin',ST.lastLogin);
+  localStorage.setItem('em_dailydone',ST.dailyDone);
+  localStorage.setItem('em_consecutive',ST.consecutivePerfect);
+  localStorage.setItem('em_inv',JSON.stringify(ST.inventory));
+  localStorage.setItem('em_eqp',JSON.stringify(ST.equipped));
+  localStorage.setItem('em_boostxp',ST.boostXP);
+  localStorage.setItem('em_boostcoins',ST.boostCoins);
+  localStorage.setItem('em_ai',ST.aiUnlocked?'1':'0');
+  localStorage.setItem('em_qdisc',ST.quizDiscount?'1':'0');
+  localStorage.setItem('em_dqw',JSON.stringify(ST.dailyQuizWords));
+  localStorage.setItem('em_sf',ST.streakFreezeExpiry||0);
+  if(currentUser&&!currentUser.isGuest){
+    saveUserData(currentUser.uid);
+    setSyncStatus('synced');
+  }
+  updateHdr();
+}
 applyEquippedTheme();
 buildPath();
+initAuth(); // Show login/signup or restore session
+checkDailyLogin();
 updateHdr();
 initFC();
 buildCourseList();
